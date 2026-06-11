@@ -24,6 +24,7 @@ cd backend
 python -m venv .venv
 .\.venv\Scripts\activate
 pip install -r requirements.txt
+copy .env.example .env
 ```
 
 Git Bash:
@@ -33,7 +34,10 @@ cd backend
 python -m venv .venv
 source .venv/Scripts/activate
 pip install -r requirements.txt
+cp .env.example .env
 ```
+
+Depois de criar o `backend/.env`, edite o arquivo e preencha `GEMINI_API_KEY` com sua chave do Google AI Studio. Para rodar sem consumir a API do Gemini, use `LLM_PROVIDER=LOCAL`.
 
 ### Executando
 
@@ -90,7 +94,8 @@ PRODUCT_DB_FILE=backend/products.db
 ### Modo GEMINI com Google AI Studio
 
 1. Acesse o Google AI Studio e crie uma API key.
-2. Configure `backend/.env`:
+2. Copie `backend/.env.example` para `backend/.env`.
+3. Configure `backend/.env`:
 
 ```env
 LLM_PROVIDER=GEMINI
