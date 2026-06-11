@@ -47,7 +47,7 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
-Depois de criar o `backend/.env`, edite o arquivo e preencha `GEMINI_API_KEY` com sua chave do Google AI Studio. Para rodar sem consumir a API do Gemini, use `LLM_PROVIDER=LOCAL`.
+Renomeie o .env.example para .env `backend/.env`, edite o arquivo e preencha `GEMINI_API_KEY` com sua chave do Google AI Studio. Para rodar sem consumir a API do Gemini, use `LLM_PROVIDER=LOCAL`.
 
 ### Executando
 
