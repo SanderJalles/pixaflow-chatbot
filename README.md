@@ -17,6 +17,8 @@ Projeto de teste tecnico para consulta de produtos da loja com backend em FastAP
 
 ### Instalacao
 
+PowerShell:
+
 ```bash
 cd backend
 python -m venv .venv
@@ -24,11 +26,30 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
+Git Bash:
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/Scripts/activate
+pip install -r requirements.txt
+```
+
 ### Executando
+
+PowerShell:
 
 ```bash
 cd backend
 .\.venv\Scripts\activate
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Git Bash:
+
+```bash
+cd backend
+source .venv/Scripts/activate
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -104,7 +125,7 @@ No backend:
 
 ```bash
 cd backend
-pytest
+python -m pytest
 ```
 
 ## GitHub Actions
