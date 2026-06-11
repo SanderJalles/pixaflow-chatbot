@@ -17,9 +17,9 @@ Projeto de teste tecnico para consulta de produtos da loja com backend em FastAP
 
 ### Instalacao
 
-PowerShell:
+Windows PowerShell:
 
-```bash
+```powershell
 cd backend
 python -m venv .venv
 .\.venv\Scripts\activate
@@ -27,7 +27,7 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-Git Bash:
+Git Bash no Windows:
 
 ```bash
 cd backend
@@ -37,23 +37,41 @@ pip install -r requirements.txt
 cp .env.example .env
 ```
 
+Linux, macOS ou WSL:
+
+```bash
+cd backend
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+cp .env.example .env
+```
+
 Depois de criar o `backend/.env`, edite o arquivo e preencha `GEMINI_API_KEY` com sua chave do Google AI Studio. Para rodar sem consumir a API do Gemini, use `LLM_PROVIDER=LOCAL`.
 
 ### Executando
 
-PowerShell:
+Windows PowerShell:
 
-```bash
+```powershell
 cd backend
 .\.venv\Scripts\activate
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
-Git Bash:
+Git Bash no Windows:
 
 ```bash
 cd backend
 source .venv/Scripts/activate
+uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+```
+
+Linux, macOS ou WSL:
+
+```bash
+cd backend
+source .venv/bin/activate
 uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
 ```
 
@@ -77,6 +95,7 @@ Exemplo de payload:
 
 - O backend busca os produtos no banco SQLite e envia esses dados como contexto para a LLM.
 - O Gemini responde somente sobre produtos, estoque, quantidade, preco, descricao, cor, tamanho, categoria, material e SKU.
+- Produtos podem ter variacoes de estoque por tamanho, cor e SKU, por exemplo Tenis nos tamanhos 38, 40, 41 e 42.
 - Perguntas fora do contexto retornam `out_of_context: true`.
 - O modo `LOCAL` existe para desenvolvimento rapido e para os testes automatizados.
 
@@ -131,6 +150,22 @@ No backend:
 ```bash
 cd backend
 python -m pytest
+```
+
+Sem ativar a venv, use o Python direto:
+
+Windows PowerShell:
+
+```powershell
+cd backend
+.\.venv\Scripts\python.exe -m pytest
+```
+
+Linux, macOS ou WSL:
+
+```bash
+cd backend
+./.venv/bin/python -m pytest
 ```
 
 ## GitHub Actions

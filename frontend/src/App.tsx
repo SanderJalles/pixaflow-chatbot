@@ -216,14 +216,6 @@ function App() {
           </div>
         </header>
 
-        <section className="suggestions" aria-label="Perguntas sugeridas">
-          {SUGGESTIONS.map((suggestion) => (
-            <button key={suggestion} type="button" onClick={() => sendQuestion(suggestion)} disabled={loading}>
-              {suggestion}
-            </button>
-          ))}
-        </section>
-
         <section className="messages" aria-live="polite">
           {messages.map((message) => (
             <article className={`message ${message.role}`} key={message.id}>
@@ -250,18 +242,28 @@ function App() {
 
         {error ? <div className="error-box">{error}</div> : null}
 
-        <form className="chat-form" onSubmit={handleSubmit}>
-          <input
-            type="text"
-            value={question}
-            placeholder="Pergunte sobre quantidade, preco ou descricao"
-            onChange={(event) => setQuestion(event.target.value)}
-            disabled={loading}
-          />
-          <button type="submit" disabled={loading || !question.trim()} aria-label="Enviar pergunta">
-            <span>Enviar</span>
-          </button>
-        </form>
+        <div className="composer">
+          <section className="suggestions" aria-label="Perguntas sugeridas">
+            {SUGGESTIONS.map((suggestion) => (
+              <button key={suggestion} type="button" onClick={() => sendQuestion(suggestion)} disabled={loading}>
+                {suggestion}
+              </button>
+            ))}
+          </section>
+
+          <form className="chat-form" onSubmit={handleSubmit}>
+            <input
+              type="text"
+              value={question}
+              placeholder="Pergunte sobre quantidade, preco ou descricao"
+              onChange={(event) => setQuestion(event.target.value)}
+              disabled={loading}
+            />
+            <button type="submit" disabled={loading || !question.trim()} aria-label="Enviar pergunta">
+              <span>Enviar</span>
+            </button>
+          </form>
+        </div>
       </main>
     </div>
   );
