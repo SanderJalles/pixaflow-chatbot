@@ -11,6 +11,16 @@ from .schemas import ChatResponse, Product
 load_dotenv(Path(__file__).resolve().parents[1] / ".env")
 
 DEFAULT_LLM_PROVIDER = "LOCAL"
+GREETING_KEYWORDS = {
+    "oi",
+    "ola",
+    "olá",
+    "bom dia",
+    "boa tarde",
+    "boa noite",
+    "e ai",
+    "e aí",
+}
 PRODUCT_KEYWORDS = [
     "produto",
     "produtos",
@@ -32,6 +42,10 @@ OUT_OF_CONTEXT_MESSAGE = (
     "Desculpe, posso responder apenas sobre os produtos cadastrados no banco de dados da loja. "
     "Por favor, faca uma pergunta sobre produtos, estoque, quantidade, preco, cor ou tamanho."
 )
+GREETING_MESSAGE = (
+    "Ola! Posso te ajudar com informacoes sobre produtos, estoque, precos, cores, tamanhos, "
+    "categorias, materiais e SKUs da loja."
+)
 
 GEMINI_MODEL = os.environ.get("GEMINI_MODEL", "gemini-flash-latest")
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY") or os.environ.get("GOOGLE_API_KEY")
@@ -46,9 +60,30 @@ def _format_product(product: Product) -> str:
     )
 
 
+def _format_product_variants(products: list[Product]) -> str:
+    first = products[0]
+    variants = "; ".join(
+        (
+            f"{product.color}, tamanho {product.size}, "
+            f"{product.quantity} un., R${product.price:.2f}, SKU {product.sku}"
+        )
+        for product in products
+    )
+    return (
+        f"{first.name}: {first.description}. Categoria: {first.category}. "
+        f"Material: {first.material}. Variacoes disponiveis: {variants}."
+    )
+
+
 def _question_refers_to_products(question: str) -> bool:
     text = question.lower()
     return any(keyword in text for keyword in PRODUCT_KEYWORDS)
+
+
+def _is_greeting(question: str) -> bool:
+    text = question.strip().lower()
+    text = text.rstrip("!?.")
+    return text in GREETING_KEYWORDS
 
 
 def _find_matching_product(question: str, products: Iterable[Product]) -> Product | None:
@@ -59,10 +94,22 @@ def _find_matching_product(question: str, products: Iterable[Product]) -> Produc
     return None
 
 
+def _find_matching_products(question: str, products: Iterable[Product]) -> list[Product]:
+    text = question.lower()
+    return [product for product in products if product.name.lower() in text]
+
+
 def _build_answer(question: str, products: list[Product]) -> ChatResponse:
     question_text = question.strip()
-    product = _find_matching_product(question_text, products)
+    matching_products = _find_matching_products(question_text, products)
+    product = matching_products[0] if matching_products else None
     lower = question_text.lower()
+
+    if _is_greeting(question_text):
+        return ChatResponse(answer=GREETING_MESSAGE, source="local-stub", out_of_context=False)
+
+    if len(matching_products) > 1:
+        return ChatResponse(answer=_format_product_variants(matching_products), source="local-stub", out_of_context=False)
 
     if product is not None:
         return ChatResponse(answer=_format_product(product), source="local-stub", out_of_context=False)
@@ -214,6 +261,9 @@ def _generate_with_gemini(question: str, products: list[Product]) -> ChatRespons
 
 
 def generate_answer(question: str, products: list[Product]) -> ChatResponse:
+    if _is_greeting(question):
+        return ChatResponse(answer=GREETING_MESSAGE, source="local-stub", out_of_context=False)
+
     provider = os.environ.get("LLM_PROVIDER", DEFAULT_LLM_PROVIDER).strip().upper()
     if provider == "GEMINI":
         return _generate_with_gemini(question, products)

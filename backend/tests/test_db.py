@@ -14,11 +14,16 @@ def test_db_initialization_and_product_seed() -> None:
         init_db(db_file)
         products = get_all_products(db_file)
 
-        assert len(products) >= 8
+        assert len(products) >= 19
         names = [row["name"] for row in products]
         assert "Camiseta" in names
         assert "Tenis" in names
         assert "Mochila" in names
+
+        tenis_sizes = {row["size"] for row in products if row["name"] == "Tenis"}
+        camiseta_sizes = {row["size"] for row in products if row["name"] == "Camiseta"}
+        assert {"38", "40", "42"}.issubset(tenis_sizes)
+        assert {"P", "M", "G"}.issubset(camiseta_sizes)
 
         first_product = dict(products[0])
         assert "category" in first_product
